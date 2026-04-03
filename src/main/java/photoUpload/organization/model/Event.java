@@ -14,7 +14,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="event")
+@Table(name="events")
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
