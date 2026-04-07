@@ -17,7 +17,7 @@ import photoUpload.organization.service.PhotoService;
 import java.io.IOException;
 import java.util.List;
 
-@CrossOrigin(origins = "https://event-photo-upload-chi.vercel.app")
+@CrossOrigin((origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/photos")
 public class PhotoController {
@@ -82,6 +82,7 @@ public class PhotoController {
             photoService.savePhotosForEvent(uuid, files);
             return ResponseEntity.ok("Fotoğraflar başarıyla yüklendi! 📸");
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Yükleme sırasında hata oluştu: " + e.getMessage());
         }
