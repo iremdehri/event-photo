@@ -23,6 +23,7 @@ public class Event {
     private String name;
     @Column(name="sub_title",nullable = true)
     private String subTitle;
+    @Column(name="cover_uri")
     private String coverUri;
     @Column(unique = true,nullable = false)
     private String uuid;
