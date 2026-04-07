@@ -13,6 +13,7 @@ import photoUpload.organization.repository.PhotoRepository;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 import java.util.Map;
 
 @Service
@@ -60,6 +61,13 @@ public class PhotoService {
                 System.out.println("DEBUG: Veritabaninda bu UUID bulunamadi!");
                 return new RuntimeException("Albüm bulunamadı!");
             });
+        
+        String safeFolderName = event.getName()
+            .toLowerCase()
+            .replaceAll("ı", "i").replaceAll("ğ", "g").replaceAll("ü", "u")
+            .replaceAll("ş", "s").replaceAll("ö", "o").replaceAll("ç", "c")
+            .replaceAll("[^a-z0-9]", "_") 
+            .replaceAll("_+", "_");   
 
         System.out.println("DEBUG: Event bulundu: " + event.getName());
         for (MultipartFile file : files) {
@@ -71,8 +79,8 @@ public class PhotoService {
             try {
                 System.out.println("DEBUG: Cloudinary'ye yukleme basliyor...");
                 Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
-                        ObjectUtils.asMap("folder", "event_photos/test_folder"));
-
+                        ObjectUtils.asMap("folder", "event_photos/" + safeFolderName));
+                
                 String secureUrl = (String) uploadResult.get("secure_url");
                 System.out.println("DEBUG: Yukleme basarili. URL: " + secureUrl);
 
