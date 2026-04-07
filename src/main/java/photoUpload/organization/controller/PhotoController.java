@@ -55,25 +55,29 @@ public class PhotoController {
     }
 
     @PostMapping(value="/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-public ResponseEntity<?> createEvent(
-        @RequestParam("name") String name,
-        @RequestParam("subTitle") String subTitle,
-        @RequestParam("userId") Long userId,
-        @RequestParam("image") MultipartFile file) throws IOException {
-
-    Map uploadResult = cloudinary.uploader().upload(file.getBytes(), 
-            ObjectUtils.asMap("folder", "event_covers"));
+    public ResponseEntity<?> createEvent(
+            @RequestParam("name") String name,
+            @RequestParam("subTitle") String subTitle,
+            @RequestParam("userId") Long userId,
+            @RequestParam("image") MultipartFile file) throws IOException {
     
-    String cloudinaryUrl = (String) uploadResult.get("secure_url");
+        Map uploadResult = cloudinary.uploader().upload(file.getBytes(), 
+                ObjectUtils.asMap("folder", "event_covers"));
+        
+        String cloudinaryUrl = (String) uploadResult.get("secure_url");
+    
+        Event event = new Event();
+        event.setName(name);
+        event.setSubTitle(subTitle);
+        event.setCoverUri(cloudinaryUrl);
+        event.setUuid(UUID.randomUUID().toString());
 
-    Event event = new Event();
-    event.setName(name);
-    event.setSubTitle(subTitle);
-    event.setCoverUri(cloudinaryUrl); // Artık kapak linki de bulutta!
-    event.setUuid(UUID.randomUUID().toString());
-
-    return ResponseEntity.ok(eventRepository.save(event));
-}
+        userRepository.findById(userId).ifPresent(user -> {
+        event.setUser(user); 
+    });
+    
+        return ResponseEntity.ok(eventRepository.save(event));
+    }
 
     @DeleteMapping("/delete-multiple")
     public ResponseEntity<?> deletePhotos(@RequestBody List<Long> photoIds){
