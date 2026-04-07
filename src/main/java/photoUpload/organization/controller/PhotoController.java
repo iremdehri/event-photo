@@ -16,16 +16,22 @@ import photoUpload.organization.service.PhotoService;
 
 import java.io.IOException;
 import java.util.List;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import java.util.Map;
+import java.util.UUID;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/photos")
 public class PhotoController {
     @Autowired
+    private Cloudinary cloudinary;
     private final PhotoService photoService;
     private final FileService fileService;
     private final EventRepository eventRepository;
     private final PhotoRepository photoRepository;
+   
 
     @Value("${server.url}") // application.properties'den IP çekiyoruz
     private String serverUrl;
