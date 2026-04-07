@@ -69,22 +69,36 @@ public class PhotoService {
     @Transactional
     public void savePhotosForEvent(String uuid, MultipartFile[] files) throws IOException {
         // 1. UUID ile ilgili Event'i (Albümü) bul
+        System.out.println("DEBUG: UUID ile arama basladi: " + uuid);
         Event event = eventRepository.findByUuid(uuid)
-                .orElseThrow(() -> new RuntimeException("Albüm bulunamadı!"));
+            .orElseThrow(() -> {
+                System.out.println("DEBUG: Veritabaninda bu UUID bulunamadi!");
+                return new RuntimeException("Albüm bulunamadı!");
+            });
 
+        System.out.println("DEBUG: Event bulundu: " + event.getName());
         for (MultipartFile file : files) {
-            if (file.isEmpty()) continue;
+        if (file.isEmpty()) {
+            System.out.println("DEBUG: Bos dosya atlandi.");
+            continue;
+        }
 
+        try {
+            System.out.println("DEBUG: Cloudinary'ye yukleme basliyor...");
             Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
-                    ObjectUtils.asMap("folder", "event_photos/" + event.getName()));
+                    ObjectUtils.asMap("folder", "event_photos/test_folder")); // Klasor ismini basitlestirdik
 
             String secureUrl = (String) uploadResult.get("secure_url");
+            System.out.println("DEBUG: Yukleme basarili. URL: " + secureUrl);
 
             Photo photo = new Photo();
             photo.setImageUrl(secureUrl);
             photo.setEvent(event);
-
             photoRepository.save(photo);
+            System.out.println("DEBUG: Fotoğraf DB'ye kaydedildi.");
+        } catch (Exception e) {
+            System.out.println("DEBUG: Cloudinary yukleme hatasi: " + e.getMessage());
+            throw e;
         }
     }
 }
