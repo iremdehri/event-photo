@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import photoUpload.organization.model.Event;
 import photoUpload.organization.model.Photo;
-import photoUpload.organization.repository.EventRepository; // Import ekledik
+import photoUpload.organization.repository.EventRepository; 
+import photoUpload.organization.repository.UserRepository;
 import photoUpload.organization.repository.PhotoRepository;
 import photoUpload.organization.service.FileService;
 import photoUpload.organization.service.PhotoService;
@@ -31,16 +32,18 @@ public class PhotoController {
     private final FileService fileService;
     private final EventRepository eventRepository;
     private final PhotoRepository photoRepository;
+    private final UserRepository userRepository;
    
 
     @Value("${server.url}") // application.properties'den IP çekiyoruz
     private String serverUrl;
 
-    public PhotoController(PhotoService photoService, FileService fileService, EventRepository eventRepository, PhotoRepository photoRepository) {
+    public PhotoController(PhotoService photoService, FileService fileService, EventRepository eventRepository, PhotoRepository photoRepository,UserRepository userRepository) {
         this.photoService = photoService;
         this.fileService = fileService;
         this.eventRepository = eventRepository;
         this.photoRepository=photoRepository;
+        this.userRepository=userRepository;
     }
 
     @GetMapping("/event/{eventId}")
