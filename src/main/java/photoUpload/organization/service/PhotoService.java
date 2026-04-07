@@ -18,11 +18,8 @@ import java.util.Map;
 
 @Service
 public class PhotoService {
-
     private final Cloudinary cloudinary;
-    @Autowired
     private final PhotoRepository photoRepository;
-    @Autowired
     private final EventRepository eventRepository;
 
     public PhotoService(Cloudinary cloudinary, PhotoRepository photoRepository, EventRepository eventRepository){
