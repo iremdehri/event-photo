@@ -17,7 +17,7 @@ import photoUpload.organization.service.PhotoService;
 import java.io.IOException;
 import java.util.List;
 
-@CrossOrigin((origins = "*", allowedHeaders = "*")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/photos")
 public class PhotoController {
