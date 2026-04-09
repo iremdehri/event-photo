@@ -40,6 +40,7 @@ public class UserController {
             user.getId(), 
             user.getFullName(), 
             user.getEmail(), 
+            user.getPhoneNumber(),
             generatedToken 
         );
 
