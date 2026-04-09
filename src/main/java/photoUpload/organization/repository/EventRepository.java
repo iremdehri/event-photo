@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
     Optional<Event> findByUuid(String uuid);
-
-    List<Event> findByUserId(Long userId);
+    Optional<Event> findByUuidAndIsDeletedFalse(String uuid);
+    List<Event> findByUserIdAndIsDeletedFalse(Long userId);
+    List<Event> findAllByUuidIn(List<String> uuids);
 }

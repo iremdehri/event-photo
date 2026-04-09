@@ -27,6 +27,8 @@ public class Event {
     private String coverUri;
     @Column(unique = true,nullable = false)
     private String uuid;
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
 
     @ManyToOne
     @JoinColumn(name="user_id")

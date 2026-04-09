@@ -30,6 +30,9 @@ public class EventService {
         event.setSubTitle(subTitle);
         event.setCoverUri("uploads/events/"+fileName);
 
+        event.setUuid(UUID.randomUUID().toString());
+        event.setDeleted(false);
+
         User user= userRepository.findById(userId).orElseThrow();
         event.setUser(user);
 
@@ -37,12 +40,28 @@ public class EventService {
     }
 
     public Event getEventByUuid(String uuid){
-        return eventRepository.findByUuid(uuid)
-                .orElseThrow(()-> new RuntimeException("Geçersiz QR Kod!"));
+        return eventRepository.findByUuidAndIsDeletedFalse(uuid)
+                .orElseThrow(() -> new RuntimeException("Gecersiz veya silinmis album!"));
     }
 
-    public void deleteMultiple(List<Long> ids) {
-    eventRepository.deleteAllById(ids); 
+    public List<Event> getActiveEventsByUserId(Long userId) {
+        return eventRepository.findByUserIdAndIsDeletedFalse(userId);
+    }
+
+    public void deleteEventByUuid(String uuid) {
+        Event event = eventRepository.findByUuid(uuid)
+                .orElseThrow(() -> new RuntimeException("Album bulunamadi"));
+        
+        event.setDeleted(true); 
+        eventRepository.save(event);
+    }
+
+    public void deleteMultipleByUuids(List<String> uuids) {
+        List<Event> events = eventRepository.findAllByUuidIn(uuids);
+        for (Event event : events) {
+            event.setDeleted(true);
+        }
+        eventRepository.saveAll(events);
     }
 
 }
