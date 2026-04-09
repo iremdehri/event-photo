@@ -24,8 +24,20 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public User login(@RequestBody User loginRequest){
-        return userService.loginUser(loginRequest.getEmail(),loginRequest.getPassword());
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    
+    User user = userService.authenticate(request.getEmail(), request.getPassword());
+    
+    String generatedToken = jwtService.generateToken(user); 
+
+    AuthResponse response = new AuthResponse(
+        user.getId(), 
+        user.getFullName(), 
+        user.getEmail(), 
+        generatedToken 
+    );
+
+    return ResponseEntity.ok(response);
     }
 
     @PutMapping("/update/{id}")

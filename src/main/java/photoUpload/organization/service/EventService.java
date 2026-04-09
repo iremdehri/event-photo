@@ -39,4 +39,9 @@ public class EventService {
         return eventRepository.findByUuid(uuid)
                 .orElseThrow(()-> new RuntimeException("Geçersiz QR Kod!"));
     }
+
+    public void deleteMultiple(List<Long> ids) {
+    eventRepository.deleteAllById(ids); 
+    }
+
 }
