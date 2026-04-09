@@ -13,34 +13,35 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        // BU SATIRA YENİ YOLLARI EKLE:
-                        .requestMatchers(
-                                "/api/users/register",
-                                "/api/events/**",
-                                "/api/photos/**",
-                                "/uploads/**",
-                                "/api/users/**",
-                                "/api/users/login",
-                                "/api/users/update/**", // Profil güncelleme yolu
-                                "/api/users/*/change-password", // Şifre değiştirme yolu
-                                "/api/users/forgot-password",
-                                "/api/users/verify-code",
-                                "/api/users/reset-password",
-                                "/api/users/delete/**"
-
-                        ).permitAll()
-                        .anyRequest().authenticated()
-                )
-                .httpBasic(basic -> {});
+            .cors(cors -> cors.configure(http)) 
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                    "/api/users/**",
+                    "/api/events/**",
+                    "/api/photos/**",
+                    "/uploads/**"
+                ).permitAll() 
+                .anyRequest().authenticated()
+            )
+            .httpBasic(basic -> {});
 
         return http.build();
-    }
-
+  }
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Varsayılan güçte (10 log rounds) oluşturur
-    }
+    public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
+      org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
+      configuration.setAllowedOrigins(java.util.List.of("*")); // Tüm kaynaklara izin ver
+      configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // DELETE'i ekle
+      configuration.setAllowedHeaders(java.util.List.of("Authorization", "Content-Type"));
+      
+      org.springframework.web.cors.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
+      source.registerCorsConfiguration("/**", configuration);
+      return source;
+  }
 
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+      return new BCryptPasswordEncoder();
+  }
 }
