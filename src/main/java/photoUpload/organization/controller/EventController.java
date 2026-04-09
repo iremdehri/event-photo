@@ -35,8 +35,8 @@ public class EventController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Event>> getEventsByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(eventRepository.findByUserId(userId));
+    public ResponseEntity<List<Event>> getUserEvents(@PathVariable Long userId) {
+        return ResponseEntity.ok(eventService.getActiveEventsByUserId(userId));
     }
 
     @PostMapping(value="/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -59,20 +59,32 @@ public class EventController {
         return ResponseEntity.ok(eventRepository.save(event));
     }
 
-    @GetMapping("/by-uuid/{uuid}")
+    @GetMapping("/{uuid}")
     public ResponseEntity<Event> getEventByUuid(@PathVariable String uuid) {
-        return eventRepository.findByUuid(uuid)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        try {
+            return ResponseEntity.ok(eventService.getEventByUuid(uuid));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     @DeleteMapping("/delete-multiple")
-    public ResponseEntity<?> deleteMultipleEvents(@RequestBody List<Long> ids) {
+    public ResponseEntity<?> deleteMultiple(@RequestBody List<String> uuids) {
         try {
-            eventService.deleteMultiple(ids);
-            return ResponseEntity.ok().build();
+            eventService.deleteMultipleByUuids(uuids);
+            return ResponseEntity.ok("Albumler basariyla gorunmez yapildi.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/delete/{uuid}")
+    public ResponseEntity<?> deleteEvent(@PathVariable String uuid) {
+        try {
+            eventService.deleteEventByUuid(uuid);
+            return ResponseEntity.ok("Album basariyla gorunmez yapildi.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 }
