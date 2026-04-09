@@ -4,20 +4,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import photoUpload.organization.model.User;
+import photoUpload.organization.model.LoginRequest;
+import photoUpload.organization.model.AuthResponse;
 import photoUpload.organization.service.UserService;
+import photoUpload.organization.service.JwtService;
 
-import java.util.List;
 import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
+    
     private final UserService userService;
+    private final JwtService jwtService; // Eksik olan servis eklendi
 
-    public UserController(UserService userService){
-        this.userService=userService;
+    // Constructor Injection (Bağımlılıklar buraya eklendi)
+    public UserController(UserService userService, JwtService jwtService){
+        this.userService = userService;
+        this.jwtService = jwtService;
     }
+    
     @PostMapping("/register")
     public User register(@RequestBody User newUser){
         return userService.registerUser(newUser);
@@ -25,19 +32,19 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-    
-    User user = userService.authenticate(request.getEmail(), request.getPassword());
-    
-    String generatedToken = jwtService.generateToken(user); 
+        
+        User user = userService.authenticate(request.getEmail(), request.getPassword());
+        
+        String generatedToken = jwtService.generateToken(user); 
 
-    AuthResponse response = new AuthResponse(
-        user.getId(), 
-        user.getFullName(), 
-        user.getEmail(), 
-        generatedToken 
-    );
+        AuthResponse response = new AuthResponse(
+            user.getId(), 
+            user.getFullName(), 
+            user.getEmail(), 
+            generatedToken 
+        );
 
-    return ResponseEntity.ok(response);
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/update/{id}")
