@@ -127,4 +127,16 @@ public class UserService {
         user.setDeletedAt(LocalDateTime.now());
         userRepository.save(user);
     }
+
+    public User authenticate(String email, String password) {
+  
+    User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("Kullanici bulunamadi."));
+
+    if (!passwordEncoder.matches(password, user.getPassword())) {
+        throw new RuntimeException("Sifre hatali.");
+    }
+
+    return user;
+    }
 }
