@@ -17,9 +17,8 @@ import java.util.Map;
 public class UserController {
     
     private final UserService userService;
-    private final JwtService jwtService; // Eksik olan servis eklendi
+    private final JwtService jwtService;
 
-    // Constructor Injection (Bağımlılıklar buraya eklendi)
     public UserController(UserService userService, JwtService jwtService){
         this.userService = userService;
         this.jwtService = jwtService;
@@ -48,9 +47,9 @@ public class UserController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<User> updateProfile(@PathVariable Long id,@RequestBody User updatedUser){
+    public ResponseEntity<User> updateProfile(@PathVariable Long id, @RequestBody User updatedUser){
         try{
-            User updated=userService.updateProfile(id,updatedUser);
+            User updated = userService.updateProfile(id, updatedUser);
             return ResponseEntity.ok(updated);
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -62,11 +61,11 @@ public class UserController {
             @PathVariable Long id,
             @RequestBody Map<String, String> passwords){
         try{
-            String oldPw=passwords.get("oldPassword");
-            String newPw=passwords.get("newPassword");
+            String oldPw = passwords.get("oldPassword");
+            String newPw = passwords.get("newPassword");
 
-            userService.changePassword(id,oldPw,newPw);
-            return ResponseEntity.ok("Şifre başarıyla güncellendi.");
+            userService.changePassword(id, oldPw, newPw);
+            return ResponseEntity.ok("Sifre basariyla guncellendi.");
         }catch(RuntimeException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -76,7 +75,7 @@ public class UserController {
     public ResponseEntity<?> forgotPassword(@RequestParam String email){
         try {
             userService.processForgotPassword(email);
-            return ResponseEntity.ok("Kod başarıyla gönderildi.");
+            return ResponseEntity.ok("Kod basariyla gonderildi.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
@@ -85,9 +84,9 @@ public class UserController {
     @PostMapping("/verify-code")
     public ResponseEntity<?> verifyCode(@RequestParam String email, @RequestParam String code) {
         if (userService.verifyOtp(email, code)) {
-            return ResponseEntity.ok("Kod doğrulandı.");
+            return ResponseEntity.ok("Kod dogrulandi.");
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Hatalı kod!");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Hatali kod!");
     }
 
     @PostMapping("/reset-password")
@@ -96,12 +95,12 @@ public class UserController {
         String newPassword = request.get("newPassword");
 
         userService.updatePassword(email, newPassword);
-        return ResponseEntity.ok("Şifre başarıyla güncellendi.");
+        return ResponseEntity.ok("Sifre basariyla guncellendi.");
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id){
         userService.deleteUser(id);
-        return ResponseEntity.ok("Hesabınız başarıyla kaldırıldı.");
+        return ResponseEntity.ok("Hesabiniz basariyla kaldirildi.");
     }
 }

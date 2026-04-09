@@ -11,6 +11,6 @@ public class AuthResponse {
     private Long id;
     private String fullName;
     private String email;
-    private String token; // Mobil uygulamanýn 401 hatasý almamak için beklediði anahtar
+    private String token; 
 
 }
