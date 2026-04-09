@@ -9,6 +9,7 @@ import photoUpload.organization.repository.UserRepository;
 
 import java.io.File;
 import java.util.UUID;
+import java.util.List;
 
 @Service
 public class EventService {
